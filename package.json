@@ -1,0 +1,20 @@
+{
+  "name": "ssg-silkgenerator",
+  "version": "1.0.0",
+  "description": "Static Site Generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smitgabani/ssg-silkgenerator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/smitgabani/ssg-silkgenerator/issues"
+  },
+  "homepage": "https://github.com/smitgabani/ssg-silkgenerator#readme"
+}
