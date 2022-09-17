@@ -1,21 +1,15 @@
-const {Command} = require("commander");
+const { Command } = require('commander');
+const program = new Command();
 const fs = require('fs');
 const htmlCreator = require('html-creator');
-
-const program = new Command();
-
-
-var filePaths = [];                 // keep track of .txt files converted 
+var filePaths = []; //keep track of .txt files converted
 var outputPath = './dist'
-
-
-/**
- * createHtml
- * @param: paraObj
- *          titleObj
- * @return:  
- */
- const createHtml = (paragraphObj, titleObj) => {
+/*
+  Create htmlCreator object using 2 params
+  @params: paragraphObj, an object of {type, content} for <p>
+  @return: an object of type htmlCreator, can use htmlRender() to convert to string
+*/
+const createHtml = (paragraphObj, titleObj) => {
   const html = new htmlCreator().withBoilerplate();
   var bodyContent = [{
     type: 'div',
@@ -49,35 +43,42 @@ var outputPath = './dist'
   html.document.addElementToType('body', bodyContent);
   return html;
 }
-/** 
- * createHtmlFIles
- * @param: filepath from commandline
- * @returns: void
- */
+/*
+  Look for title and convert text files into html files
+  @params: filePath from commandLine
+*/
+const createHtmlFiles = (filePath, fileType) => {
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if(err)
+      return console.log(err); 
+    
+    let htmlTitle = null; 
+    let titleObj = new Object({ type: 'title', content: htmlTitle });
+    //check for title, regEx checks if a line is followed by 2 newline \n\n\n
+    if(data.match(/^.+(\r?\n\r?\n\r?\n)/)) {
+      htmlTitle = data.match(/^.+(\r?\n\r?\n\r?\n)/)[0]; 
+      titleObj['content'] = htmlTitle.match(/(\w+)/g).join(' ');
+    }
 
-const createHtmlFiles = (filePath) => {
-    fs.readFile(filePath, 'utf8', (err, data) => {
-        let htmlTitle = null; 
-        let titleObj = new Object({ type: 'title', content: htmlTitle });
-        // check for title, regEx checks if a line is followed by 2 newline \n\n\n
-        if(data.match(/^.+(\r?\n\r?\n\r?\n)/)) {
-          htmlTitle = data.match(/^.+(\r?\n\r?\n\r?\n)/)[0]; 
-          titleObj['content'] = htmlTitle.match(/(\w+)/g).join(' ');
+    const paragraphObj = data
+      .substr(htmlTitle ? htmlTitle.length : 0)
+      .split(/\r?\n\r?\n/)
+      .map(param => {
+        if (fileType == "md") {
+          return markdownToHtml(param)
+        } else {
+          return Object({ type: 'p', content: param});
         }
-    
-        const paragraphObj = data
-          .substr(htmlTitle ? htmlTitle.length : 0)
-          .split(/\r?\n\r?\n/)
-          .map(param => {
-            return Object({ type: 'p', content: param}); 
-          });
-    
-        const fileToHtml = createHtml(paragraphObj, titleObj);
-        const fullFilePath = `${outputPath}/${filePath.match(/([^\/]+$)/g)[0].split('.')[0]}.html`; 
-        fs.writeFileSync(fullFilePath, fileToHtml.renderHTML());
-    
       });
-      filePaths.push(filePath);
+
+    const fileToHtml = createHtml(paragraphObj, titleObj);
+    const fullFilePath = `${outputPath}/${filePath.match(/([^\/]+$)/g)[0].split('.')[0]}.html`; 
+    fs.writeFile(fullFilePath, fileToHtml.renderHTML(), () => {
+      console.log(`${fullFilePath} is created`);
+    });
+
+  });
+  filePaths.push(filePath);
 }
 
 const markdownToHtml = (param) => {
@@ -101,25 +102,32 @@ const markdownToHtml = (param) => {
     return Object({ type: 'p', content: param});
   }
 }
-/**
- * Check if filePath is valid (folder or file .txt), if .txt file => call createHtmlFiles(filePath)
- * @param filePath 
- */
-const readInput = (filePath) => {
-    const stat = fs.lstatSync(filePath); 
-    if(!stat.isFile() && stat.isDirectory()) {
-      fs.readdirSync(filePath).forEach((file) => {
-          //recursive until a .txt file is recognized
-          readInput(`${filePath}/${file}`);
-      })
-    }
-    else if(stat.isFile() && filePath.split('.').pop() == "txt") {
-      createHtmlFiles(filePath);
-    }
-  }
 
-  program.version('0.1.2', '-v, --version');
-  program 
+/*
+  Check if filePath is valid (folder or file .txt), if .txt file => call createHtmlFiles(filePath)
+  @params: 
+    * filePath from commandLine
+    * isCheckPath, boolean for checking if the function is for checking output path
+*/
+const readInput = (filePath) => {
+  const stat = fs.lstatSync(filePath); 
+  if(!stat.isFile() && stat.isDirectory()) {
+    fs.readdirSync(filePath).forEach((file) => {
+        //recursive until a .txt file is recognized
+        readInput(`${filePath}/${file}`);
+    })
+  }
+  else if(stat.isFile() && filePath.split('.').pop() == "txt") {
+    createHtmlFiles(filePath, "txt");
+  }
+  else if (stat.isFile() && filePath.split(".").pop() == "md") {
+    createHtmlFiles(filePath, "md");
+  }
+}
+
+//configure program
+program.version('tue-1st-ssg 0.1', '-v, --version');
+program 
   .option('-o, --output <path>', 'specify a path for .html files output')
   .requiredOption('-i, --input <file path>', '(required) transform .txt or .md files into .html files');
 
@@ -151,11 +159,11 @@ if(option.input) {
   const linkObj = filePaths.map(param => {
     return {
       type: 'a', 
-      attributes: {href: `${param.match(/([^\/]+$)/g)[0].split('.')[0]}.html`, style: 'display: block'}, 
+      //replace white space with %20
+      attributes: {href: `${param.match(/([^\/]+$)/g)[0].split('.')[0].replace(/\s/g, '%20')}.html`, style: 'display: block'}, 
       content: `${param.match(/([^\/]+$)/g)[0].split('.')[0]}`
     }
   });
-  console.log(filePaths)
   indexHtml.document.addElementToType('body', { type: 'div', content: linkObj }) ;
   fs.writeFileSync(`${outputPath}/index.html`, indexHtml.renderHTML());  
 } 
