@@ -93,7 +93,7 @@ const readInput = (filePath) => {
     }
   }
 
-  program.version('0.1');
+  program.version('0.1.2', '-v, --version');
 program 
   .option('-o, --output <path>', 'Specify a path for html files output')
   .requiredOption('-i, --input <file path>', 'transform .txt files into .html files');
