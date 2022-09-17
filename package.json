@@ -11,10 +11,14 @@
     "url": "git+https://github.com/smitgabani/ssg-silkgenerator.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Smit Gabani",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/smitgabani/ssg-silkgenerator/issues"
   },
-  "homepage": "https://github.com/smitgabani/ssg-silkgenerator#readme"
+  "homepage": "https://github.com/smitgabani/ssg-silkgenerator#readme",
+  "dependencies": {
+    "commander": "^9.4.0",
+    "html-creator": "^0.6.2"
+  }
 }

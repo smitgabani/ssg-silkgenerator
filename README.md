@@ -1,4 +1,4 @@
-# Silkgenerator
+# Silkgenerator (static site generator)
 
 A Javascript command line program ***ssg-silkgenerator*** that converts **.txt** and **.md** files into **.html** files. In short a basic command line static site generator.
 
