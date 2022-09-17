@@ -79,6 +79,28 @@ const createHtmlFiles = (filePath) => {
       });
       filePaths.push(filePath);
 }
+
+const markdownToHtml = (param) => {
+  // If Heading 1 to 6, turn into corresponding h1 to h6 tag
+  if (param.match(/^\s*#{1,6}[^#]+$/)) {
+    const headerNum = param.match(/#/g).length
+    return Object({ type: `h${headerNum}`, content: param.replace(/^\s*#{1,6}([^#]+)$/, "$1")});
+  }
+  else {
+    // Wrap bold text inside <b></b>
+    param = param.replace(/\*\*([^\*]+)\*\*/g, "<b>$1</b>")
+    param = param.replace(/__([^\*]+)__/g, "<b>$1</b>")
+
+    // Wrap italic text inside <i></i>
+    param = param.replace(/\*([^\*]+)\*/g, "<i>$1</i>")
+    param = param.replace(/_([^\*]+)_/g, "<i>$1</i>")
+
+    // Turn link: [Title](http://example.com) into: <a href="http://example.com">Title</a>
+    param = param.replace(/\[(.+)\]\((.+)\)/, '<a href="$2">$1</a>')
+
+    return Object({ type: 'p', content: param});
+  }
+}
 /**
  * Check if filePath is valid (folder or file .txt), if .txt file => call createHtmlFiles(filePath)
  * @param filePath 
