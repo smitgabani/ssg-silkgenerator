@@ -1,6 +1,6 @@
-# ssg-Silkgenerator
+# Silkgenerator
 
-A Javascript command line program that converts **.txt** and **.md** files into **.html** files.
+A Javascript command line program ***ssg-silkgenerator*** that converts **.txt** and **.md** files into **.html** files. In short a basic command line static site generator.
 
 ## Implemented features. 
 - Automatically parse titles from .txt files => .html files to have `<h1>` and `<title>` tags
@@ -13,3 +13,12 @@ A Javascript command line program that converts **.txt** and **.md** files into 
 - Support static assets: All generated HTML files (from markdown files only) will reference static assets (images or favicon) from the `/assets` folder.
 
 **WARNING**: All static assets in the `/assets` folder will be override when converting new `.md` files!
+
+## Usage:
+
+## Options:
+
+## Examples:
+
+## License:
+MIT License.
