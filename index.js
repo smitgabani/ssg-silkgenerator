@@ -4,10 +4,10 @@ const fs = require('fs');
 const htmlCreator = require('html-creator');
 var filePaths = []; //keep track of .txt files converted
 var outputPath = './dist'
-/*
-  Create htmlCreator object using 2 params
-  @params: paragraphObj, an object of {type, content} for <p>
-  @return: an object of type htmlCreator, can use htmlRender() to convert to string
+/** 
+*  Create htmlCreator object using 2 params
+*  @param: paragraphObj, an object of {type, content} for <p>, for .md file paragraphObj is body object containing more than <p>, <a>
+*  @return: an object of type htmlCreator, can use htmlRender() to convert to string
 */
 const createHtml = (paragraphObj, titleObj) => {
   const html = new htmlCreator().withBoilerplate();
@@ -43,14 +43,15 @@ const createHtml = (paragraphObj, titleObj) => {
   html.document.addElementToType('body', bodyContent);
   return html;
 }
-/*
-  Look for title and convert text files into html files
-  @params: filePath from commandLine
+
+/** 
+*  Look for title and convert text files into html files
+*  @param: filePath from commandLine
 */
 const createHtmlFiles = (filePath, fileType) => {
   fs.readFile(filePath, 'utf8', (err, data) => {
     if(err)
-      return console.log(err); 
+      return console.error(`Unable to read file ${filePath}`, err);
     
     let htmlTitle = null; 
     let titleObj = new Object({ type: 'title', content: htmlTitle });
@@ -73,10 +74,11 @@ const createHtmlFiles = (filePath, fileType) => {
 
     const fileToHtml = createHtml(paragraphObj, titleObj);
     const fullFilePath = `${outputPath}/${filePath.match(/([^\/]+$)/g)[0].split('.')[0]}.html`; 
-    fs.writeFile(fullFilePath, fileToHtml.renderHTML(), () => {
-      console.log(`${fullFilePath} is created`);
+    fs.writeFile(fullFilePath, fileToHtml.renderHTML(), (err) => {
+      if(err)
+        return console.error(`Unable to write file ${fullFilePath} `, err); 
+      console.log(`${fullFilePath} is created!`);
     });
-
   });
   filePaths.push(filePath);
 }
@@ -99,15 +101,18 @@ const markdownToHtml = (param) => {
     // Turn link: [Title](http://example.com) into: <a href="http://example.com">Title</a>
     param = param.replace(/\[(.+)\]\((.+)\)/, '<a href="$2">$1</a>')
 
+    if(param.match(/\[(.+)\]\((.+)\)/))
+      return Object({type: 'a', attributes: {href: param.match(/\[(.+)\]\((.+)\)/)[2]}, content: param.match(/\[(.+)\]\((.+)\)/)[1]}); 
+    if(param.match(/---/))
+      return Object({type: 'hr', content: null});
     return Object({ type: 'p', content: param});
   }
 }
 
-/*
-  Check if filePath is valid (folder or file .txt), if .txt file => call createHtmlFiles(filePath)
-  @params: 
-    * filePath from commandLine
-    * isCheckPath, boolean for checking if the function is for checking output path
+/**
+*  Check if filePath is valid (folder or file .txt), if .txt file => call createHtmlFiles(filePath)
+*  @param: filePath from commandLine
+*  @param: isCheckPath, boolean for checking if the function is for checking output path
 */
 const readInput = (filePath) => {
   const stat = fs.lstatSync(filePath); 
@@ -165,5 +170,9 @@ if(option.input) {
     }
   });
   indexHtml.document.addElementToType('body', { type: 'div', content: linkObj }) ;
-  fs.writeFileSync(`${outputPath}/index.html`, indexHtml.renderHTML());  
+  fs.writeFile(`${outputPath}/index.html`, indexHtml.renderHTML(), (err) => {
+    if(err)
+      return console.error(`Unable to write files ${outputPath} `, err); 
+    console.log(`${outputPath}/index.html is created`);
+  });  
 } 
