@@ -15,37 +15,38 @@ var outputPath = './dist'
  *          titleObj
  * @return:  
  */
-createHtml = (paraObj, titleObj) => {
-  const html = new htmlCreator().withBoilerplate([
-        {
-          type: 'div',
-          content: paragraphObj,
-        },
-        {
-            type: titleObj.content? 'h1' : '',
-            content: `${titleObj.content}`
-        },
-        {
-            ttype: 'div',
-            content: paragraphObj,
-        },
-    ]);
-    html.document.addElementToType("head", {
-      type: "title",
-      content: titleObj.content ? `${titleObj.content}` : "Article",
+ const createHtml = (paragraphObj, titleObj) => {
+  const html = new htmlCreator().withBoilerplate();
+  var bodyContent = [{
+    type: 'div',
+    content: paragraphObj,
+  }]
+  // if a title is found, add the title wrapped inside `<h1>`
+  // tag to the top of the `<body>` HTML element
+  if (titleObj.content) {
+    bodyContent.unshift({
+      type: 'h1',
+      content: titleObj.content,
     });
-    // Append link to stylesheet to the `<head>` HTML element
-    html.document.addElementToType("head", {
-      type: "link",
-      attributes: {
-        rel: "stylesheet",
-        href: "https://cdn.jsdelivr.net/npm/water.css@2/out/water.css",
-      },
-    });
-  
-    return html;
-}
+  }
+  // Append title to the `<head>` HTML element
+  html.document.addElementToType("head", {
+    type: "title",
+    content: titleObj.content ? `${titleObj.content}` : "Article",
+  });
+  // Append link to stylesheet to the `<head>` HTML element
+  html.document.addElementToType("head", {
+    type: "link",
+    attributes: {
+      rel: "stylesheet",
+      href: "https://cdn.jsdelivr.net/npm/water.css@2/out/water.css",
+    },
+  });
 
+  html.document.addElementToType('body', bodyContent);
+
+  return html;
+}
 /** 
  * createHtmlFIles
  * @param: filepath from commandline
