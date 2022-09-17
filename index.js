@@ -19,7 +19,8 @@ var outputPath = './dist'
   const html = new htmlCreator().withBoilerplate();
   var bodyContent = [{
     type: 'div',
-    content: paragraphObj,
+    attributes: {className: 'paragraphObj'},
+    content: paragraphObj
   }]
   // if a title is found, add the title wrapped inside `<h1>`
   // tag to the top of the `<body>` HTML element
@@ -29,6 +30,9 @@ var outputPath = './dist'
       content: titleObj.content,
     });
   }
+  if (paragraphObj == null) {
+    bodyContent.pop();
+  } 
   // Append title to the `<head>` HTML element
   html.document.addElementToType("head", {
     type: "title",
@@ -42,9 +46,7 @@ var outputPath = './dist'
       href: "https://cdn.jsdelivr.net/npm/water.css@2/out/water.css",
     },
   });
-
   html.document.addElementToType('body', bodyContent);
-
   return html;
 }
 /** 
