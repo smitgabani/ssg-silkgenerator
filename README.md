@@ -14,9 +14,56 @@ A Javascript command line program ***ssg-silkgenerator*** that converts **.txt**
 
 **WARNING**: All static assets in the `/assets` folder will be override when converting new `.md` files!
 
+## Installation:
+**Clone the repo and then install dependicies and run the scripts or use the command below to install the CLI.**
+```
+npm install -g ssg-silkgenerator
+```
 ## Usage:
+Run one of these commands in your terminal
+
+```
+npx ssg-silk -i ./textfiles/file.txt
+```
+
+Converting `file.txt` in `./textfiles/` to `html`
+
+```
+npx ssg-silk -i ./textfiles
+```
+
+Converting all `.txt` files found in `./textfiles` folder
+
+```
+npx ssg-silk -i ./textfiles -o ./outputFiles
+```
+
+Converting all `.txt` files found in `./textfiles` folder and place `html` output files in `./outputFiles`
+
+Parsing JSON formatted config file with options.
+Use of `-c` or `--config` will ignore `-i`, `-o`, `-l` options in the command line.
+
+```json
+{
+  "input": "./bin/test/samples",
+  "output": "./build",
+  "stylesheet": "https://cdn.jsdelivr.net/npm/water.css@2/out/water.css",
+  "lang": "en-CA"
+}
+```
+
+```
+npx ssg-silk -c configFile.json
+```
+
 
 ## Options:
+| Options            | Functions                                          |
+| ------------------ | -------------------------------------------------- |
+| -v or --version    | Prints the current version                         |
+| -h or --help       | Prints a list of options to the screen             |
+| -i or --input      | Accepts a path to either a file or folder          |
+| -o, --output       | specify a path for .html files output              |
 
 ## Examples:
 
