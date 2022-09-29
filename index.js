@@ -4,6 +4,7 @@ const fs = require('fs');
 const htmlCreator = require('html-creator');
 var filePaths = []; //keep track of .txt files converted
 var outputPath = './dist'
+const defaultLang = "en-CA";
 /** 
 *  Create htmlCreator object using 2 params
 *  @param: paragraphObj, an object of {type, content} for <p>, for .md file paragraphObj is body object containing more than <p>, <a>
@@ -73,11 +74,11 @@ const createHtmlFiles = (filePath, fileType) => {
       });
 
     const fileToHtml = createHtml(paragraphObj, titleObj);
-    const fullFilePath = `${outputPath}/${filePath.match(/([^\/]+$)/g)[0].split('.')[0]}.html`; 
-    fs.writeFile(fullFilePath, fileToHtml.renderHTML(), (err) => {
-      if(err)
-        return console.error(`Unable to write file ${fullFilePath} `, err); 
-      console.log(`${fullFilePath} is created!`);
+    //since html creator doesn't support adding attribute to <html>, adding `lang` here seems weird
+    fs.writeFile(fullFilePath, fileToHtml.renderHTML().replace(/<html>/, `<html lang="${option.lang ? option.lang : defaultLang}">`), (err) => {
+      if(err) 
+        return console.error(`Unable to create file ${fullFilePath}`);
+      console.log(`${fullFilePath} is created`);
     });
   });
   filePaths.push(filePath);
@@ -138,6 +139,7 @@ const readInput = (filePath) => {
 program.version('tue-1st-ssg 0.1', '-v, --version');
 program 
   .option('-o, --output <path>', 'specify a path for .html files output')
+  .option('-l, --lang <language code>', 'adding a language to HTML document')
   .requiredOption('-i, --input <file path>', '(required) transform .txt or .md files into .html files');
 
 program.parse(process.argv)
@@ -174,7 +176,7 @@ if(option.input) {
     }
   });
   indexHtml.document.addElementToType('body', { type: 'div', content: linkObj }) ;
-  fs.writeFile(`${outputPath}/index.html`, indexHtml.renderHTML(), (err) => {
+  fs.writeFile(`${outputPath}/index.html`, indexHtml.renderHTML().replace(/<html>/, `<html lang="${option.lang ? option.lang : defaultLang}">`), (err) => {
     if(err)
       return console.error(`Unable to write files ${outputPath} `, err); 
     console.log(`${outputPath}/index.html is created`);
