@@ -59,12 +59,12 @@ npx ssg-silk -c configFile.json
 
 
 ## Options:
-| Options            | Functions                                          |
-| ------------------ | -------------------------------------------------- |
-| -v or --version    | Prints the current version                         |
-| -h or --help       | Prints a list of options to the screen             |
-| -i or --input      | Accepts a path to either a file or folder          |
-| -o, --output       | specify a path for .html files output              |
+| flags              | Functions                                          | Requried  |
+| ------------------ | -------------------------------------------------- |---------- |
+| -v or --version    | Prints the current version                         | n         |
+| -h or --help       | Prints a list of options to the screen             | n         |
+| -i or --input      | Accepts a path to either a file or folder          | n         |
+| -o, --output       | specify a path for .html files output              | n         |
 
 ## Examples:
 
