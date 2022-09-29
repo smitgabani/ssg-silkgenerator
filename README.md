@@ -14,6 +14,8 @@ A Javascript command line program ***ssg-silkgenerator*** that converts **.txt**
 
 **WARNING**: All static assets in the `/assets` folder will be override when converting new `.md` files!
 
+Harsh
+
 ## Installation:
 **Clone the repo and then install dependicies and run the scripts or use the command below to install the CLI.**
 ```
