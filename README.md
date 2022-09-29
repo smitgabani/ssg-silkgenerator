@@ -11,6 +11,7 @@ A Javascript command line program ***ssg-silkgenerator*** that converts **.txt**
 - The program accepts a file name or dir name as input.If `input path` is a dir, it will look for all `.txt` and `.md` files in the folder and in subfolder(s)
 - An `Index.html` contains links to other `.html` files created in folder.
 - Support static assets: All generated HTML files (from markdown files only) will reference static assets (images or favicon) from the `/assets` folder.
+- User can **specify a JSON formatted config file** to store options, instead of passing options as command line arguments
 
 **WARNING**: All static assets in the `/assets` folder will be override when converting new `.md` files!
 
@@ -66,6 +67,17 @@ npx ssg-silk -c configFile.json
 | -o, --output       | specify a path for .html files output              |
 
 ## Examples:
+
+node index.js -i markdownFile.md 
+```
+
+Parsing JSON formatted config file with options.
+
+Use of `-c` or `--config` will ignore `-i`, `-o`, `-l` options in the command line. 
+
+```
+node index.js -c configFile
+```
 
 ## License:
 MIT License.
